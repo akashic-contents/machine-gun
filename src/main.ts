@@ -30,7 +30,6 @@ const worldProperty = {
 /** 物理エンジンの世界 */
 const physics = new box2d.Box2D(worldProperty);
 
-
 interface BulletOrWallParameterObject {
 	/** 表示情報のパラメータ */
 	appear: {
@@ -49,7 +48,7 @@ interface BulletOrWallParameterObject {
 };
 
 /** グループAの銃弾生成パラメータ */
-const bulletParameterA = {
+const bulletParameterA: BulletOrWallParameterObject = {
 	/** 見た目情報 */
 	appear: {
 		assetId: "circleA",
@@ -80,7 +79,7 @@ const bulletParameterA = {
 	}
 };
 /** グループBの銃弾生成パラメータ */
-const bulletParameterB = {
+const bulletParameterB: BulletOrWallParameterObject = {
 	appear: {
 		assetId: "circleB",
 		width: 0.1 * worldProperty.scale,
@@ -104,7 +103,7 @@ const bulletParameterB = {
 	}
 };
 /** グループAの壁生成パラメータ */
-const wallParameterA = {
+const wallParameterA: BulletOrWallParameterObject = {
 	appear: {
 		width: 0.3 * worldProperty.scale,
 		height: g.game.height / 3,
@@ -128,7 +127,7 @@ const wallParameterA = {
 	}
 };
 /** グループBの壁生成パラメータ */
-const wallParameterB = {
+const wallParameterB: BulletOrWallParameterObject = {
 	appear: {
 		width: 0.3 * worldProperty.scale,
 		height: g.game.height / 3,
@@ -173,7 +172,7 @@ physics.world.SetContactListener(contactListener);
 function main(): void {
 	const scene = new g.Scene({ game: g.game, assetIds: ["circleA", "circleB"] });
 
-	scene.onLoad.add(function() {
+	scene.onLoad.add(() => {
 		const gameCenter = calcCenter(g.game);
 		const position = gameCenter.Copy();
 		// 壁Aを生成
@@ -199,13 +198,13 @@ function main(): void {
 			const delta = physics.vec2(event.prevDelta.x, event.prevDelta.y);
 			touchPosition.Add(delta);
 		});
-		scene.onPointUpCapture.add(function() {
+		scene.onPointUpCapture.add(() => {
 			touch = false;
 		});
 
 		/** フレームカウント（銃弾の発射間隔に使用） */
 		let frameCount = 0;
-		scene.onUpdate.add(function() {
+		scene.onUpdate.add(() => {
 			// 画面をタッチしている間、銃弾を発射
 			if (touch) {
 				// 画面左側をタッチしている場合はグループAの銃弾、右側はグループBの銃弾
@@ -298,7 +297,7 @@ function shootB(scene: g.Scene, position: box2d.Box2DWeb.Common.Math.b2Vec2): vo
 /**
  * 衝突判定を持つ矩形を生成する
  * @param {g.Scene} scene 描画を行うシーン
- * @param {Object} parameter 矩形の生成パラメータ
+ * @param {BulletOrWallParameterObject} parameter 矩形の生成パラメータ
  */
 function createRect(scene: g.Scene, parameter: BulletOrWallParameterObject): box2d.EBody {
 	// 表示用の矩形（1m × 1m）を生成
@@ -387,7 +386,7 @@ function createDamage(
 		x: position.x,
 		y: position.y
 	});
-	label.onUpdate.add(function() {
+	label.onUpdate.add(() => {
 		// 徐々に透過、完全に透明になったら削除
 		label.opacity -= 0.05;
 		if (label.opacity <= 0.0) {
